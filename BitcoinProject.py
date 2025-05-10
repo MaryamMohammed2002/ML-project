@@ -87,17 +87,8 @@ for name, model in models.items():
     results.append({'Model': name, 'Accuracy': acc})
     print(f'{name} Accuracy: {acc:.4f}')
 
-    # 9. إنشاء رسومات لكل نموذج
-   # plt.figure(figsize=(10, 6))
- #   sns.scatterplot(x=y_test_loaded.values.ravel(), y=y_pred, alpha=0.6)
-  #  plt.title(f'Actual vs Predicted - {name}', fontsize=14)
-  #  plt.xlabel('Actual Values', fontsize=12)
-  #  plt.ylabel('Predicted Values', fontsize=12)
-   # plt.plot([0, 1], [0, 1], 'r--')  # خط المرجع
- #   plt.savefig(f'data/Results/{name}_scatter.png', dpi=300)
-  #  plt.close()
 
-# 10. إنشاء مقارنة الأداء
+# 9. إنشاء مقارنة الأداء
 results_df = pd.DataFrame(results)
 
 # أ) رسمة مقارنة الدقة
