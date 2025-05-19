@@ -12,16 +12,18 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 
-# 1. إنشاء المجلدات
+# 1
+# ==========================================================
 folders = ['data/original', 'data/preprocessed', 'data/Results']
 for folder in folders:
     os.makedirs(folder, exist_ok=True)
 
-# 2. تحميل البيانات 
+# 2
+# ==========================================================
 btc_data = pd.read_csv('coin_Bitcoin.csv')
 btc_data.to_csv('data/original/coin_Bitcoin.csv', index=False)
 
-# 3. عرض القيم الناقصة والوصف الإحصائي
+# 3
 # ==========================================================
 print("Missing Values:")
 print(btc_data.isnull().sum())
@@ -29,12 +31,14 @@ print("\nData Description:")
 print(btc_data.describe())
 
 
-# 4. إنشاء العمود الهدف ومعالجة البيانات
+# 4
+# ==========================================================
 btc_data['Target'] = (btc_data['Close'].shift(-1) > btc_data['Close']).astype(int)
 btc_data.dropna(inplace=True)
 
 
-# 5. اختيار الخصائص وتقسيم البيانات
+# 5
+# ==========================================================
 features = ['Open', 'High', 'Low', 'Close', 'Volume']
 X = btc_data[features]
 y = btc_data['Target']
@@ -45,12 +49,14 @@ X_test.to_csv('data/preprocessed/X_test.csv', index=False)
 y_train.to_csv('data/preprocessed/Y_train.csv', index=False)
 y_test.to_csv('data/preprocessed/Y_test.csv', index=False)
 
-# 6. تطبيع البيانات
+# 6
+# ==========================================================
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# 7. تعريف النماذج (بدون Linear Regression)
+# 7
+# ==========================================================
 models = {
     'ANN': MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000),
     'SVM': SVC(kernel='rbf', probability=True),
@@ -63,7 +69,8 @@ models = {
 results = []
 confusion_data = []
 
-# 8. تدريب النماذج + حفظ التوقعات + إعداد بيانات مصفوفة الالتباس
+# 8
+# ==========================================================
 for name, model in models.items():
     model.fit(X_train_scaled, y_train.values.ravel())
     y_pred = model.predict(X_test_scaled)
@@ -79,7 +86,8 @@ for name, model in models.items():
     cm = confusion_matrix(y_test, y_pred)
     confusion_data.append((name, cm))
 
-# 9. رسم جميع مصفوفات الالتباس في شبكة واحدة
+# 9
+# ==========================================================
 fig, axes = plt.subplots(2, 3, figsize=(18, 10))
 fig.suptitle('Confusion Matrices for All Models', fontsize=16)
 
@@ -96,14 +104,12 @@ plt.tight_layout()
 plt.subplots_adjust(top=0.9)
 plt.savefig('confusion_all_models.png')
 plt.show()
-# ==========================================================
-# 10. رسم مقارنة دقة النماذج - barplot
+
+# 10
 # ==========================================================
 results_df = pd.DataFrame(results)
 plt.figure(figsize=(10, 6))
 
-# تعليق توضيحي :
-# هذا الرسم يستخدم للمقارنة بين دقة النماذج بشكل مباشر. يعطي نظرة سريعة على أفضل نموذج أداءً.
 sns.barplot(x='Model', y='Accuracy', data=results_df, palette='Blues_d')
 plt.title('Model Accuracy Comparison')
 plt.xlabel('Model')
@@ -115,18 +121,17 @@ barplot_path = 'barplot_accuracy.png'
 plt.savefig(barplot_path)
 plt.show()
 
-# ==========================================================
-# 11. رسم pairplot - تحليل العلاقات الثنائية
+
+# 11
 # ==========================================================
 
-# هذا النوع من الرسوم يوضح العلاقة بين كل زوج من المتغيرات. مفيد لاكتشاف الأنماط والترابط.
 pairplot_path = 'pairplot.png'
 sns.pairplot(btc_data[features])
 plt.savefig(pairplot_path)
 plt.show()
 
-# ==========================================================
- # 12. رسم violinplot - توزيع الأخطاء لكل نموذج
+
+ # 12
 # ==========================================================
 
 errors = []
@@ -145,11 +150,10 @@ plt.ylabel('Error', fontsize=12)
 plt.savefig('models_errors.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-# ==========================================================
-# 13. رسم الهيستوغرامات - توزيع فردي لكل خاصية
+
+# 13
 # ==========================================================
 
-# الهيستوغرام يساعد على فهم شكل توزيع كل متغير بشكل منفصل.
 histogram_path = 'histograms.png'
 plt.figure(figsize=(15, 10))
 for i, col in enumerate(features, 1):
@@ -160,11 +164,10 @@ plt.tight_layout()
 plt.savefig(histogram_path)
 plt.show()
 
-# ==========================================================
-# 14. رسم خريطة الحرارة - تحليل الترابط بين الخصائص
+
+# 14
 # ==========================================================
 
-# هذا الرسم يوضح مدى ترابط كل خاصيتين رقميتين باستخدام اللون والقيمة.
 heatmap_path = 'heatmap.png'
 plt.figure(figsize=(8, 6))
 sns.heatmap(btc_data[features].corr(), annot=True, cmap='Blues', fmt=".2f")
